@@ -1,15 +1,9 @@
 # flutter_square_pos
 
-A new flutter plugin project.
+A flutter plugin to use square POS(point of sale) api.
 
-## Getting Started
+## References
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
+- [POS-apo Build on Android](https://developer.squareup.com/docs/pos-api/build-on-android)
+- [POS-api Build on iOS](https://developer.squareup.com/docs/pos-api/build-on-ios)
+- [plug-in package](https://flutter.dev/developing-packages/)
