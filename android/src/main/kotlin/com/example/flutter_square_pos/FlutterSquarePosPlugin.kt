@@ -1,6 +1,7 @@
 package com.example.flutter_square_pos
 
 import androidx.annotation.NonNull
+import android.content.Context;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -8,6 +9,12 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+
+import com.squareup.sdk.pos.PosClient
+import com.squareup.sdk.pos.PosSdk
+import com.squareup.sdk.pos.ChargeRequest
+import com.squareup.sdk.pos.CurrencyCode
 
 /** FlutterSquarePosPlugin */
 class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler {
@@ -26,8 +33,8 @@ class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler {
     if (call.method == "getPlatformVersion") {
       result.success("Android ${android.os.Build.VERSION.RELEASE}")
     } else if (call.method == "setApplicationId") {
-      val id = call.argument<String>("applicationId")
-      result.success(id)
+      val applicationId = call.argument<String>("applicationId")
+      result.success(applicationId)
     } else {
       result.notImplemented()
     }
