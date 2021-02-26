@@ -15,6 +15,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
+  String _applicationId = 'Unknown';
 
   @override
   void initState() {
@@ -25,20 +26,24 @@ class _MyAppState extends State<MyApp> {
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
     String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       platformVersion = await FlutterSquarePos.platformVersion;
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
+    String applicationId;
+    try {
+      applicationId = await FlutterSquarePos.setApplicationId("testId");
+    } on PlatformException {
+      applicationId = 'Failed to set application id.';
+    }
+
     if (!mounted) return;
 
     setState(() {
       _platformVersion = platformVersion;
+      _applicationId = applicationId;
     });
   }
 
@@ -50,7 +55,7 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Text('Running on:\n$_platformVersion\n$_applicationId\n'),
         ),
       ),
     );

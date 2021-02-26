@@ -25,6 +25,9 @@ class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler {
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     if (call.method == "getPlatformVersion") {
       result.success("Android ${android.os.Build.VERSION.RELEASE}")
+    } else if (call.method == "setApplicationId") {
+      val id = call.argument<String>("applicationId")
+      result.success(id)
     } else {
       result.notImplemented()
     }
