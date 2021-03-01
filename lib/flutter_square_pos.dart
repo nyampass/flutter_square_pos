@@ -11,9 +11,15 @@ class FlutterSquarePos {
     return version;
   }
 
-  static Future<String> setApplicationId(String applicationId) async {
+  static Future<String> createClient(String applicationId) async {
     final String id =
-        await _channel.invokeMethod('setApplicationId', {'applicationId': applicationId});
+        await _channel.invokeMethod('createClient', {'applicationId': applicationId});
+    return id;
+  }
+
+  static Future<String> startTransaction() async {
+    final String id =
+        await _channel.invokeMethod('startTransaction');
     return id;
   }
 }

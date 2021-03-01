@@ -34,7 +34,7 @@ class _MyAppState extends State<MyApp> {
 
     String applicationId;
     try {
-      applicationId = await FlutterSquarePos.setApplicationId("testId");
+      applicationId = await FlutterSquarePos.createClient("testId");
     } on PlatformException {
       applicationId = 'Failed to set application id.';
     }
@@ -47,6 +47,19 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  onPressPay() {
+    print('pressed pay');
+    FlutterSquarePos.startTransaction();
+    // showDialog(
+    //   context: context,
+    //   builder: (context) {
+    //     return SimpleDialog(
+    //       title: Text('hi'),
+    //     );
+    //   }
+    // );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -54,9 +67,17 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: Text('Running on:\n$_platformVersion\n$_applicationId\n'),
-        ),
+        body: Column(children: [
+          Center(
+            child: Text('Running on:\n$_platformVersion\n$_applicationId\n'),
+          ),
+          Center(
+            child: FlatButton(
+              child: Text('pay'),
+              onPressed: onPressPay,
+            ),
+          )
+        ],)
       ),
     );
   }
