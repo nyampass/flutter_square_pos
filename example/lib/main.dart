@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_square_pos/flutter_square_pos.dart';
+import 'secret.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,6 +17,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   String _applicationId = 'Unknown';
+  String _result = 'None';
 
   @override
   void initState() {
@@ -34,7 +36,7 @@ class _MyAppState extends State<MyApp> {
 
     String applicationId;
     try {
-      applicationId = await FlutterSquarePos.createClient("testId");
+      applicationId = await FlutterSquarePos.createClient(squareApplicationId);
     } on PlatformException {
       applicationId = 'Failed to set application id.';
     }
@@ -47,9 +49,9 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  onPressPay() {
+  onPressPay() async {
     print('pressed pay');
-    FlutterSquarePos.startTransaction();
+    String result = await FlutterSquarePos.startTransaction();
     // showDialog(
     //   context: context,
     //   builder: (context) {
@@ -58,6 +60,9 @@ class _MyAppState extends State<MyApp> {
     //     );
     //   }
     // );
+    setState(() {
+      _result = result;
+    });
   }
 
   @override
@@ -69,7 +74,7 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Column(children: [
           Center(
-            child: Text('Running on:\n$_platformVersion\n$_applicationId\n'),
+            child: Text('Running on:\n$_platformVersion\n$_applicationId\n$_result'),
           ),
           Center(
             child: FlatButton(

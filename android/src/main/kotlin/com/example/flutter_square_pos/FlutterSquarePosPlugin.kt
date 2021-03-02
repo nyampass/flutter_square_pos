@@ -8,6 +8,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import io.flutter.plugin.common.PluginRegistry.ActivityResultListener
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -21,16 +22,30 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 
-/** FlutterSquarePosPlugin */
-class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
-  /// The MethodChannel that will the communication between Flutter and native Android
-  ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-  /// when the Flutter Engine is detached from the Activity
+class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, ActivityResultListener {
   private lateinit var channel : MethodChannel
   private lateinit var activity: Activity
   private lateinit var posClient : PosClient
   private final var CHARGE_REQUEST_CODE: Int = 1
+  private var handlingResult : Result? = null
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?): Boolean {
+    if (intent == null || requestCode != CHARGE_REQUEST_CODE) {
+      // AlertDialogHelper.showDialog(this,
+      //         "Error: unknown",
+      //         "Square Point of Sale was uninstalled or stopped working")
+      return false
+    }
+
+    if (resultCode == Activity.RESULT_OK) {
+      val success = posClient.parseChargeSuccess(intent)
+      handlingResult?.success(success.clientTransactionId)
+    } else {
+      val error = posClient.parseChargeError(intent)
+      handlingResult?.success("error " + error.code + " " + error.debugDescription)
+    }
+    return true
+  }
 
   override fun onDetachedFromActivity() {
     TODO("Not yet implemented")
@@ -42,6 +57,7 @@ class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
     activity = binding.activity;
+    binding.addActivityResultListener(this)
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
@@ -63,10 +79,10 @@ class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       }
       result.success(applicationId)
     } else if (call.method == "startTransaction") {
-
+      handlingResult = result
       val request: ChargeRequest = ChargeRequest.Builder(
               1,
-              CurrencyCode.USD)
+              CurrencyCode.JPY)
               .build()
       try {
         val intent: Intent = posClient.createChargeIntent(request)
@@ -79,7 +95,6 @@ class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         // )
         posClient.openPointOfSalePlayStoreListing()
       }
-      result.success(null)
     } else {
       result.notImplemented()
     }
