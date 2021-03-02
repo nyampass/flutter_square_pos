@@ -49,9 +49,9 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  onPressPay() async {
+  onPressPay(int amount) async {
     print('pressed pay');
-    String result = await FlutterSquarePos.startTransaction();
+    String result = await FlutterSquarePos.startTransaction(amount, 'JPY');
     // showDialog(
     //   context: context,
     //   builder: (context) {
@@ -78,10 +78,22 @@ class _MyAppState extends State<MyApp> {
           ),
           Center(
             child: FlatButton(
-              child: Text('pay'),
-              onPressed: onPressPay,
+              child: Text('500円'),
+              onPressed: () => onPressPay(500),
             ),
-          )
+          ),
+          Center(
+            child: FlatButton(
+              child: Text('1000円'),
+              onPressed: () => onPressPay(1000),
+            ),
+          ),
+          Center(
+            child: FlatButton(
+              child: Text('809円'),
+              onPressed: () => onPressPay(809),
+            ),
+          ),
         ],)
       ),
     );

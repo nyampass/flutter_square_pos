@@ -17,9 +17,12 @@ class FlutterSquarePos {
     return id;
   }
 
-  static Future<String> startTransaction() async {
+  static Future<String> startTransaction(int amount, String currency) async {
     final String id =
-        await _channel.invokeMethod('startTransaction');
+        await _channel.invokeMethod('startTransaction', {
+          "amount": amount,
+          "currency": currency,
+        });
     return id;
   }
 }

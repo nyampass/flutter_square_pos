@@ -21,3 +21,4 @@ flutter run
 - [POS-api Build on iOS](https://developer.squareup.com/docs/pos-api/build-on-ios)
 - [plug-in package](https://flutter.dev/developing-packages/)
 - [pos android fingerprint](https://developer.squareup.com/docs/pos-api/cookbook/find-your-android-fingerprint)
+- [matix-io/react-native-square-pos](https://github.com/matix-io/react-native-square-pos)

@@ -79,10 +79,16 @@ class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, A
       }
       result.success(applicationId)
     } else if (call.method == "startTransaction") {
+      val amount = call.argument<Int>("amount")
+      val currency = call.argument<String>("currency")
+      if (amount == null || currency.isNullOrEmpty()) {
+        result.success("amount and currency is required")
+        return
+      }
       handlingResult = result
       val request: ChargeRequest = ChargeRequest.Builder(
-              1,
-              CurrencyCode.JPY)
+              amount,
+              CurrencyCode.valueOf(currency))
               .build()
       try {
         val intent: Intent = posClient.createChargeIntent(request)
