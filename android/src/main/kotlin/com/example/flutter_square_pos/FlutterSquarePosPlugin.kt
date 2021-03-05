@@ -82,14 +82,21 @@ class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, A
         result.success("amount and currency is required")
         return
       }
+      val tenderTypes = call.argument<List<String>>("tenderTypes")
       try {
-        val currencyCode = CurrencyCode.valueOf(currency)
         handlingResult = result
-        val request: ChargeRequest = ChargeRequest.Builder(
+        val currencyCode = CurrencyCode.valueOf(currency)
+        val builder = ChargeRequest.Builder(
                 amount,
                 currencyCode)
-                .build()
-        val intent: Intent = posClient.createChargeIntent(request)
+        if (tenderTypes != null) {
+          var tenderTypeCodes: Array<ChargeRequest.TenderType> = emptyArray();
+          for (type in tenderTypes) {
+            tenderTypeCodes += ChargeRequest.TenderType.valueOf(type)
+          }
+          builder.restrictTendersTo(tenderTypeCodes.toTypedArray());
+        }
+        val intent: Intent = posClient.createChargeIntent(builder.build())
         activity.startActivityForResult(intent, CHARGE_REQUEST_CODE)
       } catch (e: ActivityNotFoundException) {
         result.error("activity not found", e.message, null)

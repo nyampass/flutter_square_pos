@@ -18,10 +18,11 @@ class FlutterSquarePos {
     return id;
   }
 
-  static Future startTransaction(int amount, String currency) async {
+  static Future startTransaction(int amount, String currency, {List tenderTypes =  const []}) async {
     await _channel.invokeMethod('startTransaction', {
       "amount": amount,
       "currency": currency,
+      "tenderTypes": tenderTypes,
     });
   }
 }
