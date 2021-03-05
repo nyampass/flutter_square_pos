@@ -31,9 +31,6 @@ class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, A
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?): Boolean {
     if (intent == null || requestCode != CHARGE_REQUEST_CODE) {
-      // AlertDialogHelper.showDialog(this,
-      //         "Error: unknown",
-      //         "Square Point of Sale was uninstalled or stopped working")
       return false
     }
 
@@ -42,7 +39,7 @@ class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, A
       handlingResult?.success(success.clientTransactionId)
     } else {
       val error = posClient.parseChargeError(intent)
-      handlingResult?.success("error " + error.code + " " + error.debugDescription)
+      handlingResult?.error(error.code.toString(), error.debugDescription, null)
     }
     return true
   }
@@ -85,21 +82,21 @@ class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, A
         result.success("amount and currency is required")
         return
       }
-      handlingResult = result
-      val request: ChargeRequest = ChargeRequest.Builder(
-              amount,
-              CurrencyCode.valueOf(currency))
-              .build()
       try {
+        val currencyCode = CurrencyCode.valueOf(currency)
+        handlingResult = result
+        val request: ChargeRequest = ChargeRequest.Builder(
+                amount,
+                currencyCode)
+                .build()
         val intent: Intent = posClient.createChargeIntent(request)
         activity.startActivityForResult(intent, CHARGE_REQUEST_CODE)
       } catch (e: ActivityNotFoundException) {
-        // AlertDialogHelper.showDialog(
-        //         this,
-        //         "Error",
-        //         "Square Point of Sale is not installed"
-        // )
-        posClient.openPointOfSalePlayStoreListing()
+        result.error("activity not found", e.message, null)
+        handlingResult = null
+      } catch (e: IllegalArgumentException) {
+        result.error("invalid string for currency", e.message, null)
+        handlingResult = null
       }
     } else {
       result.notImplemented()

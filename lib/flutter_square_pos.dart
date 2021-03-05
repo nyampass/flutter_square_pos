@@ -12,17 +12,16 @@ class FlutterSquarePos {
   }
 
   static Future<String> createClient(String applicationId) async {
-    final String id =
-        await _channel.invokeMethod('createClient', {'applicationId': applicationId});
+    final String id = await _channel.invokeMethod('createClient', {
+      'applicationId': applicationId,
+    });
     return id;
   }
 
-  static Future<String> startTransaction(int amount, String currency) async {
-    final String id =
-        await _channel.invokeMethod('startTransaction', {
-          "amount": amount,
-          "currency": currency,
-        });
-    return id;
+  static Future startTransaction(int amount, String currency) async {
+    await _channel.invokeMethod('startTransaction', {
+      "amount": amount,
+      "currency": currency,
+    });
   }
 }

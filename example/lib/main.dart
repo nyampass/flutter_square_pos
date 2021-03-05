@@ -6,7 +6,7 @@ import 'package:flutter_square_pos/flutter_square_pos.dart';
 import 'secret.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MaterialApp(home: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -49,20 +49,28 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  onPressPay(int amount) async {
+  onPressPay(int amount, String currency) async {
     print('pressed pay');
-    String result = await FlutterSquarePos.startTransaction(amount, 'JPY');
-    // showDialog(
-    //   context: context,
-    //   builder: (context) {
-    //     return SimpleDialog(
-    //       title: Text('hi'),
-    //     );
-    //   }
-    // );
-    setState(() {
-      _result = result;
-    });
+    try {
+      String result = await FlutterSquarePos.startTransaction(amount, currency);
+      setState(() {
+        _result = result;
+      });
+    } catch (e) {
+      print(e);
+      showDialog(
+        context: this.context,
+        child: AlertDialog(
+          content: Text(e.message),
+          actions: [
+            FlatButton(
+              child: Text('close'),
+              onPressed: () => Navigator.pop(context, false)
+            )
+          ],
+        ),
+      );
+    }
   }
 
   @override
@@ -74,24 +82,24 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Column(children: [
           Center(
-            child: Text('Running on:\n$_platformVersion\n$_applicationId\n$_result'),
+            child: Text('Running on: $_platformVersion\nsquareApplicationId: $_applicationId\nresult: $_result'),
           ),
           Center(
             child: FlatButton(
-              child: Text('500円'),
-              onPressed: () => onPressPay(500),
+              child: Text('500 JPY'),
+              onPressed: () => onPressPay(500, 'JPY'),
             ),
           ),
           Center(
             child: FlatButton(
-              child: Text('1000円'),
-              onPressed: () => onPressPay(1000),
+              child: Text('809 JPY'),
+              onPressed: () => onPressPay(809, 'JPY'),
             ),
           ),
           Center(
             child: FlatButton(
-              child: Text('809円'),
-              onPressed: () => onPressPay(809),
+              child: Text('5 USD'),
+              onPressed: () => onPressPay(5, 'USD'),
             ),
           ),
         ],)
