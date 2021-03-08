@@ -95,7 +95,7 @@ class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, A
           for (type in tenderTypes) {
             tenderTypeCodes += ChargeRequest.TenderType.valueOf(type)
           }
-          builder.restrictTendersTo(tenderTypeCodes.toTypedArray());
+          // builder.restrictTendersTo(tenderTypeCodes.toTypedArray());
         }
         val intent: Intent = posClient.createChargeIntent(builder.build())
         activity.startActivityForResult(intent, CHARGE_REQUEST_CODE)
