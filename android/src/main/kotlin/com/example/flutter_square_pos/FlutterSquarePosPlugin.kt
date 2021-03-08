@@ -1,7 +1,10 @@
 package com.example.flutter_square_pos
 
 import androidx.annotation.NonNull
+import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context;
+import android.content.Intent
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -18,9 +21,7 @@ import com.squareup.sdk.pos.PosSdk
 import com.squareup.sdk.pos.ChargeRequest
 import com.squareup.sdk.pos.CurrencyCode
 
-import android.app.Activity
-import android.content.ActivityNotFoundException
-import android.content.Intent
+import com.google.gson.Gson;
 
 class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, ActivityResultListener {
   private lateinit var channel : MethodChannel
@@ -28,6 +29,7 @@ class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, A
   private lateinit var posClient : PosClient
   private final var CHARGE_REQUEST_CODE: Int = 1
   private var handlingResult : Result? = null
+  private var gson = Gson()
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?): Boolean {
     if (intent == null || requestCode != CHARGE_REQUEST_CODE) {
@@ -83,7 +85,7 @@ class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, A
         result.success("amount and currency is required")
         return
       }
-      val tenderTypes = call.argument<List<String>>("tenderTypes")
+      val tenderTypes = call.argument<String>("tenderTypes")
       try {
         handlingResult = result
         val currencyCode = CurrencyCode.valueOf(currency)
@@ -91,11 +93,12 @@ class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, A
                 amount,
                 currencyCode)
         if (tenderTypes != null) {
-          var tenderTypeCodes: Array<ChargeRequest.TenderType> = emptyArray();
-          for (type in tenderTypes) {
+          var tenderTypeCodes = listOf<ChargeRequest.TenderType>();
+          var strCodeList = gson.fromJson<Array<String>>(tenderTypes, Array<String>::class.java).toList()
+          for (type in strCodeList) {
             tenderTypeCodes += ChargeRequest.TenderType.valueOf(type)
           }
-          // builder.restrictTendersTo(tenderTypeCodes.toTypedArray());
+          builder.restrictTendersTo(tenderTypeCodes);
         }
         val intent: Intent = posClient.createChargeIntent(builder.build())
         activity.startActivityForResult(intent, CHARGE_REQUEST_CODE)

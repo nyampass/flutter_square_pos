@@ -49,10 +49,9 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  onPressPay(int amount, String currency) async {
-    print('pressed pay');
+  onPressPay(int amount, String currency, {List<String> tenderTypes = const []}) async {
     try {
-      String result = await FlutterSquarePos.startTransaction(amount, currency);
+      String result = await FlutterSquarePos.startTransaction(amount, currency, tenderTypes: tenderTypes);
       setState(() {
         _result = result;
       });
@@ -103,13 +102,18 @@ class _MyAppState extends State<MyApp> {
           Center(
             child: FlatButton(
               child: Text('500 JPY'),
-              onPressed: () => onPressPay(500, 'JPY'),
+              onPressed: () => onPressPay(500, 'JPY', tenderTypes: ['CASH']),
             ),
           ),
           Center(
             child: FlatButton(
               child: Text('809 JPY'),
-              onPressed: () => onPressPay(809, 'JPY'),
+              onPressed: () => onPressPay(809, 'JPY', tenderTypes: [
+                'CARD',
+                'CARD_ON_FILE',
+                'CASH',
+                'OTHER'
+              ]),
             ),
           ),
           Center(

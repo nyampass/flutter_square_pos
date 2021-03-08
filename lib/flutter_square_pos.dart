@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
@@ -18,11 +19,12 @@ class FlutterSquarePos {
     return id;
   }
 
-  static Future startTransaction(int amount, String currency, {List tenderTypes =  const []}) async {
-    await _channel.invokeMethod('startTransaction', {
+  static Future startTransaction(int amount, String currency, {List<String> tenderTypes =  const []}) async {
+    String strTenderTypes = tenderTypes.length > 0 ? jsonEncode(tenderTypes) : null;
+    return await _channel.invokeMethod('startTransaction', {
       "amount": amount,
       "currency": currency,
-      "tenderTypes": tenderTypes,
+      "tenderTypes": strTenderTypes,
     });
   }
 }
