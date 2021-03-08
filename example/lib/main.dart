@@ -56,11 +56,27 @@ class _MyAppState extends State<MyApp> {
       setState(() {
         _result = result;
       });
+    } on PlatformException catch (e) {
+      print(e);
+      showDialog(
+        context: this.context,
+        child: AlertDialog(
+          title: Text(e.code),
+          content: Text(e.message),
+          actions: [
+            FlatButton(
+              child: Text('close'),
+              onPressed: () => Navigator.pop(context, false)
+            )
+          ],
+        ),
+      );
     } catch (e) {
       print(e);
       showDialog(
         context: this.context,
         child: AlertDialog(
+          title: Text('Unexpected error'),
           content: Text(e.message),
           actions: [
             FlatButton(

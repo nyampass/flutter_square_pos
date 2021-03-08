@@ -41,6 +41,7 @@ class FlutterSquarePosPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, A
       val error = posClient.parseChargeError(intent)
       handlingResult?.error(error.code.toString(), error.debugDescription, null)
     }
+    handlingResult = null
     return true
   }
 
