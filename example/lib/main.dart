@@ -17,7 +17,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   String _applicationId = 'Unknown';
-  String _result = 'None';
+  String _result = 'Unkown';
 
   @override
   void initState() {

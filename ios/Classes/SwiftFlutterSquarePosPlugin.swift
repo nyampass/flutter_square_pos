@@ -9,6 +9,20 @@ public class SwiftFlutterSquarePosPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result("iOS " + UIDevice.current.systemVersion)
+    if call.method == "getPlatformVersion" {
+      result("iOS " + UIDevice.current.systemVersion)
+    } else if call.method == "createClient" {
+      result("test result for createClient")
+      // guard let args = call.arguments else {
+      //   return
+      // }
+      // let applicationId = call.arguments["applicationId"] as? String
+      // result(applicationId)
+    } else if call.method == "startTransaction" {
+      result("todo")
+      // TODO
+    } else {
+      result("not handled")
+    }
   }
 }
