@@ -3,7 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_square_pos/flutter_square_pos.dart';
-import 'secret.dart';
+import './secret.dart';
 
 void main() {
   runApp(MaterialApp(home: MyApp()));
@@ -49,9 +49,11 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  onPressPay(int amount, String currency, {List<String> tenderTypes = const []}) async {
+  onPressPay(int amount, String currency,
+      {List<String> tenderTypes = const []}) async {
     try {
-      String result = await FlutterSquarePos.startTransaction(amount, currency, tenderTypes: tenderTypes);
+      String result = await FlutterSquarePos.startTransaction(amount, currency,
+          tenderTypes: tenderTypes);
       setState(() {
         _result = result;
       });
@@ -59,14 +61,13 @@ class _MyAppState extends State<MyApp> {
       print(e);
       showDialog(
         context: this.context,
-        child: AlertDialog(
+        builder: (context) => AlertDialog(
           title: Text(e.code),
           content: Text(e.message),
           actions: [
-            FlatButton(
-              child: Text('close'),
-              onPressed: () => Navigator.pop(context, false)
-            )
+            TextButton(
+                child: Text('close'),
+                onPressed: () => Navigator.pop(context, false))
           ],
         ),
       );
@@ -74,14 +75,13 @@ class _MyAppState extends State<MyApp> {
       print(e);
       showDialog(
         context: this.context,
-        child: AlertDialog(
+        builder: (context) => AlertDialog(
           title: Text('Unexpected error'),
           content: Text(e.message),
           actions: [
-            FlatButton(
-              child: Text('close'),
-              onPressed: () => Navigator.pop(context, false)
-            )
+            TextButton(
+                child: Text('close'),
+                onPressed: () => Navigator.pop(context, false))
           ],
         ),
       );
@@ -92,38 +92,37 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Column(children: [
-          Center(
-            child: Text('Running on: $_platformVersion\nsquareApplicationId: $_applicationId\nresult: $_result'),
+          appBar: AppBar(
+            title: const Text('Plugin example app'),
           ),
-          Center(
-            child: FlatButton(
-              child: Text('500 JPY'),
-              onPressed: () => onPressPay(500, 'JPY', tenderTypes: ['CASH']),
-            ),
-          ),
-          Center(
-            child: FlatButton(
-              child: Text('809 JPY'),
-              onPressed: () => onPressPay(809, 'JPY', tenderTypes: [
-                'CARD',
-                'CARD_ON_FILE',
-                'CASH',
-                'OTHER'
-              ]),
-            ),
-          ),
-          Center(
-            child: FlatButton(
-              child: Text('5 USD'),
-              onPressed: () => onPressPay(5, 'USD'),
-            ),
-          ),
-        ],)
-      ),
+          body: Column(
+            children: [
+              Center(
+                child: Text(
+                    'Running on: $_platformVersion\nsquareApplicationId: $_applicationId\nresult: $_result'),
+              ),
+              Center(
+                child: TextButton(
+                  child: Text('500 JPY'),
+                  onPressed: () =>
+                      onPressPay(500, 'JPY', tenderTypes: ['CASH']),
+                ),
+              ),
+              Center(
+                child: TextButton(
+                  child: Text('809 JPY'),
+                  onPressed: () => onPressPay(809, 'JPY',
+                      tenderTypes: ['CARD', 'CARD_ON_FILE', 'CASH', 'OTHER']),
+                ),
+              ),
+              Center(
+                child: TextButton(
+                  child: Text('5 USD'),
+                  onPressed: () => onPressPay(5, 'USD'),
+                ),
+              ),
+            ],
+          )),
     );
   }
 }
