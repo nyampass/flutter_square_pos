@@ -19,12 +19,15 @@ class FlutterSquarePos {
     return id;
   }
 
-  static Future startTransaction(int amount, String currency, {List<String> tenderTypes =  const []}) async {
-    String strTenderTypes = tenderTypes.length > 0 ? jsonEncode(tenderTypes) : null;
+  static Future startTransaction(int amount, String currency,
+      {List<String> tenderTypes = const [], String callbackURL = null}) async {
+    String strTenderTypes =
+        tenderTypes.length > 0 ? jsonEncode(tenderTypes) : null;
     return await _channel.invokeMethod('startTransaction', <String, dynamic>{
       "amount": amount,
       "currency": currency,
       "tenderTypes": strTenderTypes,
+      "callbackURL": callbackURL,
     });
   }
 }

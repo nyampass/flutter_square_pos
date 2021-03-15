@@ -20,6 +20,7 @@ flutter run
 - [POS-apo Build on Android](https://developer.squareup.com/docs/pos-api/build-on-android)
 - [POS-api Build on iOS](https://developer.squareup.com/docs/pos-api/build-on-ios)
 - [SquarePointOfSaleSDK-iOS](https://github.com/square/SquarePointOfSaleSDK-iOS)
+- [Type of expression is ambiguous using Square code](https://stackoverflow.com/questions/46533607/type-of-expression-is-ambiguous-using-square-code)
 - [Writing custom platform-specific code](https://flutter.dev/docs/development/platform-integration/platform-channels)
 - [plug-in package](https://flutter.dev/developing-packages/)
 - [pos android fingerprint](https://developer.squareup.com/docs/pos-api/cookbook/find-your-android-fingerprint)

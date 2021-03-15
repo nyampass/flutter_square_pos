@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
       {List<String> tenderTypes = const []}) async {
     try {
       String result = await FlutterSquarePos.startTransaction(amount, currency,
-          tenderTypes: tenderTypes);
+          tenderTypes: tenderTypes, callbackURL: squareCallbackURL);
       setState(() {
         _result = result;
       });

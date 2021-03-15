@@ -26,28 +26,36 @@ public class SwiftFlutterSquarePosPlugin: NSObject, FlutterPlugin {
         return
       }
       let callbackURL = args["callbackURL"] as? String
-      let amount = args["callbackURL"] as? Int
-      // do {
-      //   let apiRequest =
-      //     try SCCAPIRequest(
-      //       callbackURL: callbackURL,
-      //       amount: amount,
-      //       userInfoString: nil,
-      //       locationID: nil,
-      //       notes: nil,
-      //       customerID: nil,
-      //       supportedTenderTypes: .all,
-      //       clearsDefaultFees: false,
-      //       returnsAutomaticallyAfterPayment: false,
-      //       disablesKeyedInCardEntry: false,
-      //       skipsReceipt: false
-      //     )
-      //   // Open Point of Sale to complete the payment.
-      //   try SCCAPIConnection.perform(apiRequest)
-      // } catch let error {
-      //   // TODO return error
-      //   result(error.localizedDescription)
-      // }
+      let currency = args["currency"] as? String
+      let amount = args["amount"] as? Int
+      if callbackURL == nil {
+        // TODO return error
+        result("callbackURL is required")
+        return
+      }
+      do {
+        let money = try SCCMoney(amountCents: amount!, currencyCode: currency!)
+        let url = URL(string: callbackURL!)!
+        let apiRequest =
+          try SCCAPIRequest(
+            callbackURL: url,
+            amount: money,
+            userInfoString: nil,
+            locationID: nil,
+            notes: nil,
+            customerID: nil,
+            supportedTenderTypes: SCCAPIRequestTenderTypes.all,
+            clearsDefaultFees: false,
+            returnsAutomaticallyAfterPayment: false,
+            disablesKeyedInCardEntry: false,
+            skipsReceipt: false
+          )
+        // Open Point of Sale to complete the payment.
+        try SCCAPIConnection.perform(apiRequest)
+      } catch let error {
+        // TODO return error
+        result(error.localizedDescription)
+      }
       result("todo")
     } else {
       result("not handled")
