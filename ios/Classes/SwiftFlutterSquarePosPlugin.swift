@@ -9,6 +9,33 @@ public class SwiftFlutterSquarePosPlugin: NSObject, FlutterPlugin {
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
+  // private var handlingResult: FlutterResult?
+  // public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+  //   guard let sourceApplication = options[.sourceApplication] as? String,
+  //     sourceApplication.hasPrefix("com.squareup.square") else {
+  //     return false
+  //   }
+  //   if (handlingResult == nil) {
+  //     return false
+  //   }
+  //   do {
+  //     let response = try SCCAPIResponse(responseURL: url)
+  //     if let error = response.error {
+  //       // Handle a failed request.
+  //       // print(error.localizedDescription)
+  //       handlingResult!(error.localizedDescription)
+  //     } else {
+  //       handlingResult!("success")
+  //     }
+  //   } catch let error as NSError {
+  //     // Handle unexpected errors.
+  //     // print(error.localizedDescription)
+  //     handlingResult!(error.localizedDescription)
+  //   }
+  //   handlingResult = nil
+  //   return true
+  // }
+
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     if call.method == "getPlatformVersion" {
       result("iOS " + UIDevice.current.systemVersion)
@@ -28,8 +55,8 @@ public class SwiftFlutterSquarePosPlugin: NSObject, FlutterPlugin {
       let callbackURL = args["callbackURL"] as? String
       let currency = args["currency"] as? String
       let amount = args["amount"] as? Int
+      // let strTenderTypes = args["tenderTypes"]
       if callbackURL == nil {
-        // TODO return error
         result("callbackURL is required")
         return
       }
@@ -52,11 +79,12 @@ public class SwiftFlutterSquarePosPlugin: NSObject, FlutterPlugin {
           )
         // Open Point of Sale to complete the payment.
         try SCCAPIConnection.perform(apiRequest)
+        // handlingResult = result
+        result(nil)
       } catch let error {
         // TODO return error
         result(error.localizedDescription)
       }
-      result("todo")
     } else {
       result("not handled")
     }
