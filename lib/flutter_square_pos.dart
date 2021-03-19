@@ -31,26 +31,19 @@ class FlutterSquarePos {
       "tenderTypes": strTenderTypes,
       "callbackURL": callbackURL,
     });
-    print("invokeResult");
-    print(invokeResult);
     if (invokeResult != null || !Platform.isIOS) {
       invokeResult;
     } else {
-      String strResult = "";
-      StreamSubscription sub = getUriLinksStream().listen((Uri uri) {
-        print("received uri");
-        print(uri);
-        // TODO parse uri
-        strResult = uri.toString();
-        return strResult;
-      }, onError: (err) {});
-      // await sub.asFuture();
-      // Future.wait([f]);
-      // sub.cancel();
-      // TODO listen stream once
-      print("strResult");
-      print(strResult);
-      return strResult;
+      Uri uri = await getUriLinksStream().first;
+      Map<String, dynamic> baseParams = uri.queryParameters;
+      Map<String, dynamic> params = json.decode(baseParams["data"]);
+      if (params.containsKey("error_code")) {
+        throw Exception(params["error_code"]);
+      } else if (params.containsKey("transaction_id")) {
+        return params["transaction_id"];
+      } else {
+        return "unknown: " + params.toString();
+      }
     }
   }
 }
