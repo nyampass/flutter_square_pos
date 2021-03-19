@@ -55,6 +55,7 @@ public class SwiftFlutterSquarePosPlugin: NSObject, FlutterPlugin {
       let callbackURL = args["callbackURL"] as? String
       let currency = args["currency"] as? String
       let amount = args["amount"] as? Int
+      let skipsReceipt = (args["skipReceipt"] as? Bool) ?? false
       // let strTenderTypes = args["tenderTypes"]
       if callbackURL == nil {
         result("callbackURL is required")
@@ -75,7 +76,7 @@ public class SwiftFlutterSquarePosPlugin: NSObject, FlutterPlugin {
             clearsDefaultFees: false,
             returnsAutomaticallyAfterPayment: false,
             disablesKeyedInCardEntry: false,
-            skipsReceipt: false
+            skipsReceipt: skipsReceipt
           )
         // Open Point of Sale to complete the payment.
         try SCCAPIConnection.perform(apiRequest)

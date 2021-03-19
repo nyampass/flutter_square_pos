@@ -49,11 +49,17 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  onPressPay(int amount, String currency,
-      {List<String> tenderTypes = const []}) async {
+  onPressPay(
+    int amount,
+    String currency, {
+    List<String> tenderTypes = const [],
+    bool skipReceipt = false,
+  }) async {
     try {
       String result = await FlutterSquarePos.startTransaction(amount, currency,
-          tenderTypes: tenderTypes, callbackURL: squareCallbackURL);
+          tenderTypes: tenderTypes,
+          callbackURL: squareCallbackURL,
+          skipReceipt: skipReceipt);
       setState(() {
         _result = result;
       });
@@ -104,8 +110,8 @@ class _MyAppState extends State<MyApp> {
               Center(
                 child: TextButton(
                   child: Text('500 JPY'),
-                  onPressed: () =>
-                      onPressPay(500, 'JPY', tenderTypes: ['CASH']),
+                  onPressed: () => onPressPay(500, 'JPY',
+                      tenderTypes: ['CASH'], skipReceipt: true),
                 ),
               ),
               Center(

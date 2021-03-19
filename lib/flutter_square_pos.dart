@@ -20,8 +20,13 @@ class FlutterSquarePos {
     return id;
   }
 
-  static Future startTransaction(int amount, String currency,
-      {List<String> tenderTypes = const [], String callbackURL = null}) async {
+  static Future startTransaction(
+    int amount,
+    String currency, {
+    List<String> tenderTypes = const [],
+    String callbackURL = null,
+    bool skipReceipt = false,
+  }) async {
     String strTenderTypes =
         tenderTypes.length > 0 ? jsonEncode(tenderTypes) : null;
     final String invokeResult =
@@ -30,6 +35,7 @@ class FlutterSquarePos {
       "currency": currency,
       "tenderTypes": strTenderTypes,
       "callbackURL": callbackURL,
+      "skipReceipt": skipReceipt,
     });
     if (invokeResult != null || !Platform.isIOS) {
       invokeResult;
