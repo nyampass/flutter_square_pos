@@ -56,12 +56,41 @@ public class SwiftFlutterSquarePosPlugin: NSObject, FlutterPlugin {
       let currency = args["currency"] as? String
       let amount = args["amount"] as? Int
       let skipsReceipt = (args["skipReceipt"] as? Bool) ?? false
-      // let strTenderTypes = args["tenderTypes"]
+      let strJsonTenderTypes = args["tenderTypes"] as? String
       if callbackURL == nil {
         result("callbackURL is required")
         return
       }
       do {
+        var tenderTypes: SCCAPIRequestTenderTypes? = nil
+        if (strJsonTenderTypes != nil) {
+          let jsonData = Data(strJsonTenderTypes!.utf8)
+          let strTypes = try JSONDecoder().decode([String].self, from: jsonData)
+          for strType in strTypes {
+            var type: SCCAPIRequestTenderTypes? = nil
+            if (strType == "CASH") {
+              type = SCCAPIRequestTenderTypes.cash
+            } else if (strType == "CARD") {
+              type = SCCAPIRequestTenderTypes.card
+            } else if (strType == "CARD_ON_FILE") {
+              type = SCCAPIRequestTenderTypes.cardOnFile
+            } else if (strType == "SQUARE_GIFT_CARD") {
+              type = SCCAPIRequestTenderTypes.squareGiftCard
+            } else if (strType == "OTHER") {
+              type = SCCAPIRequestTenderTypes.other
+            } else {
+              // TODO raise error
+            }
+            if (tenderTypes == nil) {
+              tenderTypes = type
+            } else {
+              tenderTypes!.formSymmetricDifference(type!)
+            }
+          }
+        }
+        if (tenderTypes == nil) {
+          tenderTypes = SCCAPIRequestTenderTypes.all
+        }
         let money = try SCCMoney(amountCents: amount!, currencyCode: currency!)
         let url = URL(string: callbackURL!)!
         let apiRequest =
@@ -72,7 +101,7 @@ public class SwiftFlutterSquarePosPlugin: NSObject, FlutterPlugin {
             locationID: nil,
             notes: nil,
             customerID: nil,
-            supportedTenderTypes: SCCAPIRequestTenderTypes.all,
+            supportedTenderTypes: tenderTypes!,
             clearsDefaultFees: false,
             returnsAutomaticallyAfterPayment: false,
             disablesKeyedInCardEntry: false,

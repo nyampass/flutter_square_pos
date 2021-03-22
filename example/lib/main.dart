@@ -123,6 +123,12 @@ class _MyAppState extends State<MyApp> {
               ),
               Center(
                 child: TextButton(
+                  child: Text('1000 JPY'),
+                  onPressed: () => onPressPay(1000, 'JPY'),
+                ),
+              ),
+              Center(
+                child: TextButton(
                   child: Text('5 USD'),
                   onPressed: () => onPressPay(5, 'USD'),
                 ),
