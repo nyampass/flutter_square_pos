@@ -56,27 +56,32 @@ class _MyAppState extends State<MyApp> {
     bool skipReceipt = false,
   }) async {
     try {
-      String result = await FlutterSquarePos.startTransaction(amount, currency,
+      Map<String, String> result = await FlutterSquarePos.startTransaction(
+          amount, currency,
           tenderTypes: tenderTypes,
           callbackURL: squareCallbackURL,
           skipReceipt: skipReceipt);
-      setState(() {
-        _result = result;
-      });
-    } on PlatformException catch (e) {
-      print(e);
-      showDialog(
-        context: this.context,
-        builder: (context) => AlertDialog(
-          title: Text(e.code),
-          content: Text(e.message),
-          actions: [
-            TextButton(
-                child: Text('close'),
-                onPressed: () => Navigator.pop(context, false))
-          ],
-        ),
-      );
+      if (result.containsKey("errorCode")) {
+        setState(() {
+          _result = result["errorCode"];
+        });
+        showDialog(
+          context: this.context,
+          builder: (context) => AlertDialog(
+            title: Text(result["errorCode"] ?? ""),
+            content: Text(result["errorMessage"] ?? ""),
+            actions: [
+              TextButton(
+                  child: Text('close'),
+                  onPressed: () => Navigator.pop(context, false))
+            ],
+          ),
+        );
+      } else {
+        setState(() {
+          _result = result["clientTransactionId"];
+        });
+      }
     } catch (e) {
       print(e);
       showDialog(

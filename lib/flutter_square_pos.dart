@@ -20,7 +20,7 @@ class FlutterSquarePos {
     return id;
   }
 
-  static Future startTransaction(
+  static Future<Map<String, String>> startTransaction(
     int amount,
     String currency, {
     List<String> tenderTypes = const [],
@@ -29,26 +29,35 @@ class FlutterSquarePos {
   }) async {
     String strTenderTypes =
         tenderTypes.length > 0 ? jsonEncode(tenderTypes) : null;
-    final String invokeResult =
-        await _channel.invokeMethod('startTransaction', <String, dynamic>{
-      "amount": amount,
-      "currency": currency,
-      "tenderTypes": strTenderTypes,
-      "callbackURL": callbackURL,
-      "skipReceipt": skipReceipt,
-    });
+    String invokeResult;
+    try {
+      invokeResult =
+          await _channel.invokeMethod('startTransaction', <String, dynamic>{
+        "amount": amount,
+        "currency": currency,
+        "tenderTypes": strTenderTypes,
+        "callbackURL": callbackURL,
+        "skipReceipt": skipReceipt,
+      });
+    } on PlatformException catch (e) {
+      print("platform exception");
+      print(e);
+      return {"errorCode": e.code, "errorMessage": e.message};
+    } catch (e) {
+      return {"errorMessage": e.toString()};
+    }
     if (invokeResult != null || !Platform.isIOS) {
-      invokeResult;
+      return {"clientTransactionId": invokeResult};
     } else {
       Uri uri = await getUriLinksStream().first;
       Map<String, dynamic> baseParams = uri.queryParameters;
       Map<String, dynamic> params = json.decode(baseParams["data"]);
       if (params.containsKey("error_code")) {
-        throw Exception(params["error_code"]);
-      } else if (params.containsKey("transaction_id")) {
-        return params["transaction_id"];
+        return {"errorCode": params["error_code"]};
+      } else if (params.containsKey("client_transaction_id")) {
+        return {"clientTransactionId": params["client_transaction_id"]};
       } else {
-        return "unknown: " + params.toString();
+        return {"errorMessage": "unknown: " + params.toString()};
       }
     }
   }
