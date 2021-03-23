@@ -41,7 +41,11 @@ public class SwiftFlutterSquarePosPlugin: NSObject, FlutterPlugin {
       result("iOS " + UIDevice.current.systemVersion)
     } else if call.method == "createClient" {
       guard let args = call.arguments as? Dictionary<String, Any> else {
-        // TODO return error
+        result(FlutterError(
+          code: "no arguments",
+          message: "cannot get arguments in swift",
+          details: ""
+        ))
         return
       }
       let applicationId = args["applicationId"] as? String
@@ -49,7 +53,11 @@ public class SwiftFlutterSquarePosPlugin: NSObject, FlutterPlugin {
       result(applicationId)
     } else if call.method == "startTransaction" {
       guard let args = call.arguments as? Dictionary<String, Any> else {
-        // TODO return error
+        result(FlutterError(
+          code: "no arguments",
+          message: "cannot get arguments in swift",
+          details: ""
+        ))
         return
       }
       let callbackURL = args["callbackURL"] as? String
@@ -58,39 +66,58 @@ public class SwiftFlutterSquarePosPlugin: NSObject, FlutterPlugin {
       let skipsReceipt = (args["skipReceipt"] as? Bool) ?? false
       let strJsonTenderTypes = args["tenderTypes"] as? String
       if callbackURL == nil {
-        result("callbackURL is required")
+        result(FlutterError(
+          code: "callbackURL_is_required",
+          message: "callbackULR is requires for iOS",
+          details: ""
+        ))
         return
       }
-      do {
-        var tenderTypes: SCCAPIRequestTenderTypes? = nil
-        if (strJsonTenderTypes != nil) {
-          let jsonData = Data(strJsonTenderTypes!.utf8)
-          let strTypes = try JSONDecoder().decode([String].self, from: jsonData)
-          for strType in strTypes {
-            var type: SCCAPIRequestTenderTypes? = nil
-            if (strType == "CASH") {
-              type = SCCAPIRequestTenderTypes.cash
-            } else if (strType == "CARD") {
-              type = SCCAPIRequestTenderTypes.card
-            } else if (strType == "CARD_ON_FILE") {
-              type = SCCAPIRequestTenderTypes.cardOnFile
-            } else if (strType == "SQUARE_GIFT_CARD") {
-              type = SCCAPIRequestTenderTypes.squareGiftCard
-            } else if (strType == "OTHER") {
-              type = SCCAPIRequestTenderTypes.other
-            } else {
-              // TODO raise error
-            }
-            if (tenderTypes == nil) {
-              tenderTypes = type
-            } else {
-              tenderTypes!.formSymmetricDifference(type!)
-            }
+      var tenderTypes: SCCAPIRequestTenderTypes? = nil
+      if (strJsonTenderTypes != nil) {
+        let jsonData = Data(strJsonTenderTypes!.utf8)
+        var strTypes: [String] = []
+        do {
+          strTypes = try JSONDecoder().decode([String].self, from: jsonData)
+        } catch let error {
+          result(FlutterError(
+            code: "cannot_parse_json",
+            message: "Failed to parse json string",
+            details: ""
+          ))
+          return
+        }
+        for strType in strTypes {
+          var type: SCCAPIRequestTenderTypes? = nil
+          if (strType == "CASH") {
+            type = SCCAPIRequestTenderTypes.cash
+          } else if (strType == "CARD") {
+            type = SCCAPIRequestTenderTypes.card
+          } else if (strType == "CARD_ON_FILE") {
+            type = SCCAPIRequestTenderTypes.cardOnFile
+          } else if (strType == "SQUARE_GIFT_CARD") {
+            type = SCCAPIRequestTenderTypes.squareGiftCard
+          } else if (strType == "OTHER") {
+            type = SCCAPIRequestTenderTypes.other
+          } else {
+            result(FlutterError(
+              code: "invalid_string_for_tender_type",
+              message: "Cannot parse " + strType + " as tender type",
+              details: ""
+            ))
+            return
+          }
+          if (tenderTypes == nil) {
+            tenderTypes = type
+          } else {
+            tenderTypes!.formSymmetricDifference(type!)
           }
         }
-        if (tenderTypes == nil) {
-          tenderTypes = SCCAPIRequestTenderTypes.all
-        }
+      }
+      if (tenderTypes == nil) {
+        tenderTypes = SCCAPIRequestTenderTypes.all
+      }
+      do {
         let money = try SCCMoney(amountCents: amount!, currencyCode: currency!)
         let url = URL(string: callbackURL!)!
         let apiRequest =
@@ -107,13 +134,14 @@ public class SwiftFlutterSquarePosPlugin: NSObject, FlutterPlugin {
             disablesKeyedInCardEntry: false,
             skipsReceipt: skipsReceipt
           )
-        // Open Point of Sale to complete the payment.
         try SCCAPIConnection.perform(apiRequest)
-        // handlingResult = result
-        result(nil)
+        result(nil) // success
       } catch let error {
-        // TODO return error
-        result(error.localizedDescription)
+        result(FlutterError(
+          code: "unexpected_error",
+          message: error.localizedDescription,
+          details: ""
+        ))
       }
     } else {
       result("not handled")
