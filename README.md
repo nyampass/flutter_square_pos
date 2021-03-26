@@ -2,6 +2,12 @@
 
 A flutter plugin to use square POS(point of sale) api.
 
+## Setup
+
+### Android
+
+Change minSdkVersino to 23.
+
 ## Run example app
 
 Create your own example/lib/secret.dart to put square application id before run app.
