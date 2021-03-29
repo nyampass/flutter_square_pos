@@ -129,6 +129,10 @@ if (result.containsKey("errorCode")) {
 }
 ```
 
+## License
+
+MIT
+
 ## References
 
 - [POS-apo Build on Android](https://developer.squareup.com/docs/pos-api/build-on-android)
