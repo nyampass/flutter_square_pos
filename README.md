@@ -20,6 +20,8 @@ depencendies:
 
 #### Define applicationId of square on code of your app
 
+Get Application ID from [developper dashboard](https://developer.squareup.com/apps) and define it on your app.
+
 For example on `main.dart`.
 
 ```dart
