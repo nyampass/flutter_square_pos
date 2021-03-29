@@ -91,7 +91,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    await FlutterSquarePos.createClient(squareApplicationId)
+    FlutterSquarePos.createClient(squareApplicationId)
   }
 }
 ```
