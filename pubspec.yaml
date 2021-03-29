@@ -1,8 +1,7 @@
 name: flutter_square_pos
 description: A new flutter plugin project.
 version: 1.0.0
-author:
-homepage:
+repository: https://github.com/nyampass/flutter_square_pos
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
