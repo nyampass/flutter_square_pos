@@ -2,15 +2,16 @@
 
 Demonstrates how to use the flutter_square_pos plugin.
 
-## Getting Started
+## Setup
 
-This project is a starting point for a Flutter application.
+Create your own lib/secret.dart to put square application id before run app.
+```
+cp lib/secret.dart.exampele lib/secret.dart
+```
 
-A few resources to get you started if this is your first Flutter project:
+## Run
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Then you can run example app.
+```
+flutter run
+```
