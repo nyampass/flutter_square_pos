@@ -103,8 +103,11 @@ class _MyAppState extends State<MyApp> {
 By calling startTransaction, you can get client_transaction_id or error information.
 
 ```dart
+int amount = 809;
+String currency = 'JPY';
 Map<String, String> result = await FlutterSquarePos.startTransaction(
-    amount, 809,
+    amount,
+    currency,
     tenderTypes: ['CARD', 'CARD_ON_FILE', 'CASH', 'OTHER'])
     callbackURL: squareCallbackURL, // Required for iOS
     skipReceipt: true); // skipReceipt support only for iOS
